@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        var nickname = sessionStorage.getItem('nickname');
+        var image = sessionStorage.getItem('profileimage');
+        var acc = sessionStorage.getItem('account');
+        
+        
+        document.write(nickname);
+        document.write("<br>");
+        document.write(acc);
+        document.write("<br>");
+        document.write("<img src=sessionStorage.getItem('profileimage')>");
+        </script>
+        
+        
+        
+        
+        이름 :{{Users.nickname}}
+       
+</body>
+</html>

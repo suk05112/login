@@ -1,0 +1,114 @@
+{% load socialaccount %}
+{% providers_media_js %}
+{% load staticfiles %}
+
+  <script>
+
+    var id=sessionStorage.getItem('nickname');
+    if(id!=null){
+
+      location.href="127.0.0.1:8000/profile/"
+    }
+
+  </script>
+  <a href="{% provider_login_url 'google' %}"><img src="{% static '4.png' %}" alt="로그인이미지" width="500"></a><br>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> 
+  <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
+
+  <!-- <a id="kakao-login-btn"></a> -->
+
+  <a id="custom-login-btn" href="javascript:loginWithKakao()">
+      <img src="{% static '3.png' %}"width="500"/>
+      </a>
+  <script type='text/javascript'>
+ 
+    var setCookie = function(name, value, exp) {
+      var date = new Date();
+      date.setTime(date.getTime() + exp*24*60*60*1000);
+      document.cookie = name + '=' + value + ';expires=' + date.toUTCString() + ';path=/';
+      };
+
+    //<![CDATA[
+      // 사용할 앱의 JavaScript 키를 설정해 주세요.
+      Kakao.init('7d194ca7e6fe9f6026759d3c191ecfb3');
+      // 카카오 로그인 버튼을 생성합니다.
+      function loginWithKakao(){
+        // container: '#kakao-login-btn',
+        Kakao.Auth.login({
+        success: function(authObj) {
+          // 로그인 성공시, API를 호출합니다.
+          //alert(JSON.stringify(authObj))
+          
+          Kakao.API.request({
+            url: '/v2/user/me',
+          
+            success: function(res) {
+              //alert(JSON.stringify(res));
+
+              var profileimage = res.properties.profile_image;
+              var nickname = res.properties.nickname;
+              var account = res.kakao_account.email;
+              
+              console.log(account);
+              console.log(nickname);
+              setCookie("nickname", nickname, 1);
+              
+              
+              $.ajax({
+              method: 'GET',
+              url: '{% url "login" %}',
+              data: {
+              "profileimage": profileimage,
+              "account": account,
+              "nickname": nickname,
+              },
+
+      success: function(data){
+        
+        sessionStorage.setItem('nickname', nickname)
+        sessionStorage.setItem('account', account)
+        sessionStorage.setItem('profileimage', profileimage)
+        console.log(nickname);
+
+        alert('데이터 전달 성공')
+      }
+    });
+
+              alert(profileimage);
+            },
+            fail: function(error) {
+              alert(JSON.stringify(error));
+            }
+          });
+        },
+        fail: function(err) {
+          alert(JSON.stringify(err));
+        }
+      });  
+      }
+    //]]>
+    location.href="127.0.0.1:8000/profile/"
+  </script>
+<!-- <script src="https://apis.google.com/js/platform.js" async defer></script>
+<div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark">dfd</div>
+    <meta name="google-signin-client_id" content="52115914046-uesabdkgdohemf5qt0guavefqfn2rj8r.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+  
+        <script>
+            function onSignIn(googleUser) {
+                // Useful data for your client-side scripts:
+                var profile = googleUser.getBasicProfile();
+                console.log("ID: " + profile.getId()); // Don't send this directly to your server!
+                console.log('Full Name: ' + profile.getName());
+                console.log('Given Name: ' + profile.getGivenName());
+                console.log('Family Name: ' + profile.getFamilyName());
+                console.log("Image URL: " + profile.getImageUrl());
+                console.log("Email: " + profile.getEmail());
+  
+                // The ID token you need to pass to your backend:
+                var id_token = googleUser.getAuthResponse().id_token;
+                console.log("ID Token: " + id_token);
+            };
+        </script> -->
+  <br>
+
